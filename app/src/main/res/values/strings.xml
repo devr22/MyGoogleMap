@@ -2,4 +2,5 @@
 
     <string name="google_map_api_key">AIzaSyDmnL5CJZyVAzFc-96jS4JIAQVY1vekBts</string>
     <string name="app_name">MyGoogleMap</string>
+    <string name="enter_address_city_or_zipcode">Enter Address, City or ZipCode</string>
 </resources>
