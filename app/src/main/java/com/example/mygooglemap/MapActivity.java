@@ -11,7 +11,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
-import android.widget.EditText;
+import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,11 +24,14 @@ import androidx.core.content.ContextCompat;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.places.GeoDataClient;
+import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -44,15 +47,18 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private static final String coarse_location = Manifest.permission.ACCESS_COARSE_LOCATION;
     private static final int location_permission_request_code = 1234;
     private static final float DEFAULT_ZOOM = 15f;
+    private static final LatLngBounds lat_lng_Bounds = new LatLngBounds( new LatLng(-40, -168), new LatLng(71,136));
 
     // widgets
-    private EditText searchText;
+    private AutoCompleteTextView searchText;
     private ImageView gps_icon;
 
     // variables
     private Boolean location_permission_granted = false;
     private GoogleMap mMap;
     private FusedLocationProviderClient fusedLocationProviderClient;
+    private PlaceAutocompleteAdapter placeAutocompleteAdapter;
+    private GeoDataClient geoDataClient;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -70,6 +76,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private void init(){
 
         Log.d(TAG, "init: initializing");
+
+        geoDataClient = Places.getGeoDataClient(this);
+
+        placeAutocompleteAdapter = new PlaceAutocompleteAdapter(this, geoDataClient, lat_lng_Bounds, null);
+        searchText.setAdapter(placeAutocompleteAdapter);
 
         searchText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
