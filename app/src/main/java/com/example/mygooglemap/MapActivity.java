@@ -11,6 +11,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
+import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -22,9 +23,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.example.mygooglemap.model.placeInfo;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.places.AutocompletePrediction;
 import com.google.android.gms.location.places.GeoDataClient;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.PlaceBuffer;
 import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -40,7 +49,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MapActivity extends AppCompatActivity implements OnMapReadyCallback{
+public class MapActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener{
 
     private static final String TAG = "MapActivity";
     private static final String fine_location = Manifest.permission.ACCESS_FINE_LOCATION;
@@ -59,6 +68,14 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private FusedLocationProviderClient fusedLocationProviderClient;
     private PlaceAutocompleteAdapter placeAutocompleteAdapter;
     private GeoDataClient geoDataClient;
+    private GoogleApiClient googleApiClient;
+    private placeInfo mplaceInfo;
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+    }
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -77,7 +94,16 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         Log.d(TAG, "init: initializing");
 
+        googleApiClient = new GoogleApiClient
+                            .Builder(this)
+                            .addApi(Places.GEO_DATA_API)
+                            .addApi(Places.PLACE_DETECTION_API)
+                            .enableAutoManage(this, this)
+                            .build();
+
         geoDataClient = Places.getGeoDataClient(this);
+
+        searchText.setOnItemClickListener(mAutoCompleteClickListener);
 
         placeAutocompleteAdapter = new PlaceAutocompleteAdapter(this, geoDataClient, lat_lng_Bounds, null);
         searchText.setAdapter(placeAutocompleteAdapter);
@@ -276,4 +302,70 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
     }
 
+    /*
+    ```````````` google places API AutoComplete suggestions
+     */
+    private AdapterView.OnItemClickListener mAutoCompleteClickListener = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+            hideSoftKeyboard();
+
+            final AutocompletePrediction item = placeAutocompleteAdapter.getItem(i);
+            final String placeId = item.getPlaceId();
+
+            PendingResult<PlaceBuffer> placeResult = Places.GeoDataApi.getPlaceById(googleApiClient, placeId);
+            placeResult.setResultCallback(mUpdatePlaceDetailsCallback);
+
+        }
+    };
+
+    private ResultCallback<PlaceBuffer> mUpdatePlaceDetailsCallback = new ResultCallback<PlaceBuffer>() {
+        @Override
+        public void onResult(@NonNull PlaceBuffer places) {
+
+            if (!places.getStatus().isSuccess())
+            {
+                Log.d(TAG, "onResult: Place query did not completed successfully! " + places.getStatus().toString());
+                places.release();
+                return;
+            }
+            final Place place = places.get(0);
+
+            try {
+                mplaceInfo = new placeInfo();
+                mplaceInfo.setName(place.getName().toString());
+                mplaceInfo.setAddress(place.getAddress().toString());
+                mplaceInfo.setPhoneNumber(place.getPhoneNumber().toString());
+                mplaceInfo.setId(place.getId());
+                mplaceInfo.setWebsitesUri(place.getWebsiteUri());
+                mplaceInfo.setLatLng(place.getLatLng());
+                mplaceInfo.setRating(place.getRating());
+                mplaceInfo.setAttributions(place.getAttributions().toString());
+
+                Log.d(TAG, "onResult: Place: " + mplaceInfo.toString());
+
+            }
+            catch (NullPointerException e){
+                Log.e(TAG, "onResult: NullPointerException: " + e.getMessage());
+            }
+
+            moveCamera(new LatLng(place.getViewport().getCenter().latitude,
+                        place.getViewport().getCenter().longitude), DEFAULT_ZOOM, mplaceInfo.getName());
+
+            places.release();
+
+        }
+    };
+
 }
+
+
+
+
+
+
+
+
+
+
