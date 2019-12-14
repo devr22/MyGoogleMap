@@ -11,7 +11,6 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
-import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -23,24 +22,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import com.example.mygooglemap.model.placeInfo;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.PendingResult;
-import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.places.AutocompletePrediction;
-import com.google.android.gms.location.places.GeoDataClient;
-import com.google.android.gms.location.places.Place;
-import com.google.android.gms.location.places.PlaceBuffer;
-import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -49,16 +37,17 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MapActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener{
+public class MapActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private static final String TAG = "MapActivity";
     private static final String fine_location = Manifest.permission.ACCESS_FINE_LOCATION;
     private static final String coarse_location = Manifest.permission.ACCESS_COARSE_LOCATION;
     private static final int location_permission_request_code = 1234;
     private static final float DEFAULT_ZOOM = 15f;
-    private static final LatLngBounds lat_lng_Bounds = new LatLngBounds( new LatLng(-40, -168), new LatLng(71,136));
+   // private static final LatLngBounds lat_lng_Bounds = new LatLngBounds( new LatLng(-40, -168), new LatLng(71,136));
 
     // widgets
+    //private AutocompleteSupportFragment autoCompletesearchText;
     private AutoCompleteTextView searchText;
     private ImageView gps_icon;
 
@@ -66,15 +55,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private Boolean location_permission_granted = false;
     private GoogleMap mMap;
     private FusedLocationProviderClient fusedLocationProviderClient;
+    /**
     private PlaceAutocompleteAdapter placeAutocompleteAdapter;
     private GeoDataClient geoDataClient;
     private GoogleApiClient googleApiClient;
     private placeInfo mplaceInfo;
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
-    }
+     */
 
 
     @Override
@@ -83,6 +69,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
 
+        //autoCompletesearchText = (AutocompleteSupportFragment) getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
         searchText = findViewById(R.id.input_search);
         gps_icon = findViewById(R.id.ic_gps);
 
@@ -94,6 +81,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         Log.d(TAG, "init: initializing");
 
+        /***
         googleApiClient = new GoogleApiClient
                             .Builder(this)
                             .addApi(Places.GEO_DATA_API)
@@ -108,7 +96,26 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         placeAutocompleteAdapter = new PlaceAutocompleteAdapter(this, geoDataClient, lat_lng_Bounds, null);
         searchText.setAdapter(placeAutocompleteAdapter);
 
+         */
+
+        /***  Get place predictions programmatically
+         *
+
+        String API_key = "AIzaSyDmnL5CJZyVAzFc-96jS4JIAQVY1vekBts";
+
+        if (!Places.isInitialized()){
+            Places.initialize(getApplicationContext(), API_key);
+        }
+
+        autoCompletesearchText.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG));
+
+        autoCompletesearchText.setOnPlaceSelectedListener(this);
+
+         */
+
+
         searchText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+
             @Override
             public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
 
@@ -122,6 +129,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 return false;
             }
         });
+
 
         gps_icon.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -302,9 +310,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
     }
 
-    /*
+
+    /**
     ```````````` google places API AutoComplete suggestions
      */
+    /**
     private AdapterView.OnItemClickListener mAutoCompleteClickListener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -357,6 +367,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         }
     };
+
+     */
 
 }
 
