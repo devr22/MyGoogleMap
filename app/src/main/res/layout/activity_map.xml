@@ -42,16 +42,6 @@
             android:id="@+id/input_search"
             android:imeOptions="actionSearch"/>
 
-        <!--
-        <fragment android:id="@+id/autocomplete_fragment"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_toEndOf="@+id/ic_magnify"
-            android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
-            />
-        -->
-
-
     </RelativeLayout>
 
     <ImageView
@@ -64,6 +54,16 @@
         android:scaleType="centerCrop"
         android:id="@+id/ic_gps"
         android:src="@drawable/ic_gps"/>
+
+    <ImageView
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_below="@+id/relLayout1"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="10dp"
+        android:scaleType="centerCrop"
+        android:id="@+id/ic_info"
+        android:src="@drawable/ic_info"/>
 
 </RelativeLayout>
 
