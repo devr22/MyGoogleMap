@@ -59,6 +59,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     // widgets
     private AutoCompleteTextView searchText;
     private ImageView gps_icon;
+    private ImageView info_icon;
 
     // variables
     private Boolean location_permission_granted = false;
@@ -68,6 +69,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     protected GeoDataClient geoDataClient;
     private placeInfo mplaceInfo;
     private Marker marker;
+    private Address address;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -77,6 +79,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         searchText = findViewById(R.id.input_search);
         gps_icon = findViewById(R.id.ic_gps);
+        info_icon = findViewById(R.id.ic_info);
 
         getLocationPermission();
 
@@ -114,6 +117,13 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             @Override
             public void onClick(View view) {
                 getDeviceLocation();
+            }
+        });
+
+        info_icon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getInfo();
             }
         });
 
@@ -160,6 +170,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         Log.d(TAG, "onMapReady: map is ready");
         Toast.makeText(this, "Map is Ready", Toast.LENGTH_SHORT).show();
+
         mMap = googleMap;
 
         if (location_permission_granted)
@@ -245,7 +256,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     private void moveCamera(LatLng latLng, float zoom, placeInfo mplaceInfo){
 
-        Log.d(TAG, "moveCamera: moving the camera to: lat: " + latLng.latitude + ", lng: " + latLng.longitude);
+        Log.d(TAG, "moveCamera: moving the camera to: latitude: " + latLng.latitude + ", longitude: " + latLng.longitude);
+
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
 
         mMap.clear();
@@ -282,15 +294,16 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private void moveCamera(LatLng latLng, float zoom, String title){
 
         Log.d(TAG, "moveCamera: moving the camera to: lat: " + latLng.latitude + ", lng: " + latLng.longitude);
+
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
 
-       if (!title.equals("My Location"))
-       {
-           MarkerOptions markerOptions = new MarkerOptions().position(latLng).title(title);
-           mMap.addMarker(markerOptions);
-       }
+        if (!title.equals("My Location"))
+        {
+            MarkerOptions markerOptions = new MarkerOptions().position(latLng).title(title);
+            mMap.addMarker(markerOptions);
+        }
 
-       hideSoftKeyboard();
+        hideSoftKeyboard();
 
     }
 
@@ -312,12 +325,19 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         }
 
         if (list.size() > 0)
-        {            Address address = list.get(0);
+        {
+            address = list.get(0);
 
             Log.d(TAG, "geolocate: found a location" + address.toString());
 
             moveCamera(new LatLng(address.getLatitude(), address.getLongitude()), DEFAULT_ZOOM, address.getAddressLine(0));
         }
+
+    }
+
+    private void getInfo(){
+
+        Log.d(TAG, "getInfo: Latitude:-" + address.getLatitude() + "Longitude:-" + address.getLongitude());
 
     }
 
