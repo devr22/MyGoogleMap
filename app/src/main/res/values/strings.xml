@@ -3,4 +3,7 @@
     <string name="google_map_Api_Key">AIzaSyAvsYKwvy2hl5Uo5abh7NZLC2tuHS8XAKg</string>
     <string name="app_name">MyGoogleMap</string>
     <string name="enter_address_city_or_zipcode">Enter Address, City or ZipCode</string>
+    <string name="details_content">Details Content</string>
+    <string name="location_info">Location Info</string>
+    <string name="close">CLOSE</string>
 </resources>

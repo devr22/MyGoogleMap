@@ -14,7 +14,7 @@
         android:layout_height="match_parent"
         android:layout_marginBottom="@dimen/spacing_middle"
         android:layout_marginTop="@dimen/spacing_middle"
-        android:text="Location Info"
+        android:text="@string/location_info"
         android:textAppearance="@style/TextAppearance.AppCompat.Title"/>
 
     <TextView
@@ -22,7 +22,7 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_marginTop="@dimen/spacing_medium"
-        android:text="Details Content"
+        android:text="@string/details_content"
         android:textAppearance="@style/TextAppearance.AppCompat.Subhead"/>
 
     <RelativeLayout
@@ -32,12 +32,12 @@
         android:layout_marginTop="15dp">
 
         <Button
-            android:id="@+id/bt_close"
+            android:id="@+id/btn_close"
             style="@style/Base.Widget.AppCompat.Button.Borderless.Colored"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="CLOSE"
-            android:layout_alignParentRight="true"
+            android:text="@string/close"
+            android:layout_alignParentEnd="true"
             android:layout_marginEnd="15dp"/>
 
     </RelativeLayout>

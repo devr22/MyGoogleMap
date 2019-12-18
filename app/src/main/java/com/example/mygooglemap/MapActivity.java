@@ -1,6 +1,7 @@
 package com.example.mygooglemap;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -23,6 +24,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.example.mygooglemap.model.addressInfo;
 import com.example.mygooglemap.model.placeInfo;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -71,6 +73,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private Marker marker;
     private Address address;
 
+    //Bottom sheet
+    BottomSheetDialog bottomSheetDialog;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
 
@@ -106,7 +111,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 {
                     // execute method for searching the place
                     geolocate();
-                    hideSoftKeyboard();
                 }
 
                 return false;
@@ -310,6 +314,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private void geolocate(){
 
         Log.d(TAG, "geolocate: geolocate method is called");
+        hideSoftKeyboard();
 
         String searchString = searchText.getText().toString();
 
@@ -335,9 +340,23 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     }
 
+    @SuppressLint("SetTextI18n")
     private void getInfo(){
 
         Log.d(TAG, "getInfo: Latitude:-" + address.getLatitude() + "Longitude:-" + address.getLongitude());
+
+        bottomSheetDialog = new BottomSheetDialog();
+        bottomSheetDialog.show(getSupportFragmentManager(), "Bottom Sheet");
+
+        addressInfo maddressInfo = new addressInfo();
+
+        maddressInfo.setLatitude(address.getLatitude());
+        maddressInfo.setLongitude(address.getLongitude());
+        maddressInfo.setContry(address.getCountryName() + ", " + address.getCountryCode());
+        maddressInfo.setLocality(address.getLocality());
+        maddressInfo.setPostalcode(address.getPostalCode());
+        maddressInfo.setUrl(address.getUrl());
+        maddressInfo.setPhoneNumber(address.getPhone());
 
     }
 

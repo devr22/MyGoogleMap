@@ -3,12 +3,12 @@
     android:height="24dp"
     android:viewportWidth="21.6"
     android:viewportHeight="21.6"
-    android:tint="#DDDDE6"
+    android:tint="#010102"
     android:alpha="0.8">
   <group android:translateX="-1.2"
       android:translateY="-1.2">
       <path
-          android:fillColor="#1182DA"
+          android:fillColor="#113DDA"
           android:pathData="M12,2C6.48,2 2,6.48 2,12s4.48,10 10,10 10,-4.48 10,-10S17.52,2 12,2zM13,17h-2v-6h2v6zM13,9h-2L11,7h2v2z"/>
   </group>
 </vector>
